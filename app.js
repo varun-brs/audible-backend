@@ -7,6 +7,7 @@ import languageRoute from "./src/routes/languagesRoute.js";
 import categoryRoute from "./src/routes/categoriesRoute.js";
 import authorRoute from "./src/routes/authorsRoute.js";
 import filterRoute from "./src/routes/filtersAPIRoute.js";
+import audiobooksRoute from "./src/routes/audioBooksRoute.js";
 
 import path from "path";
 import { fileURLToPath } from "url";
@@ -34,6 +35,7 @@ app.use("/api/languages", languageRoute);
 app.use("/api/categories", categoryRoute);
 app.use("/api/filters", filterRoute);
 app.use("/api/authors", authorRoute);
+app.use("/api/audiobooks", audiobooksRoute);
 
 // Fix for ES modules __dirname
 const __filename = fileURLToPath(import.meta.url);

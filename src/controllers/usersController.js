@@ -10,11 +10,11 @@ import {
 
 //  Create User
 const createUser = async (req, res, next) => {
-  const { first_name, last_name, email, password } = req.body;
+  const { first_name, last_name, email, password, role } = req.body;
   try {
-    if (!first_name || !last_name || !email || !password) {
+    if (!first_name || !last_name || !email || !password || !role) {
       const err = new Error(
-        "Firstname, Lastname, Email and Password is required"
+        "Firstname, Lastname, Email,Password, role is required"
       );
       err.statusCode = 400;
       return next(err);
@@ -69,6 +69,7 @@ const createUser = async (req, res, next) => {
       last_name,
       email,
       password: hashedPassword,
+      role,
       verify_token: token,
       verify_token_expires: Date.now() + 7200000, // 2 hours
     });
@@ -134,9 +135,9 @@ const verifyEmail = async (req, res, next) => {
 // login user
 
 const loginUser = async (req, res, next) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    const err = new Error("Email & Password are required");
+  const { email, password, role } = req.body;
+  if (!email || !password || !role) {
+    const err = new Error("Email,Password & role are required");
     err.statusCode = 400;
     return next(err);
   }
@@ -171,6 +172,12 @@ const loginUser = async (req, res, next) => {
       return next(err);
     }
 
+    if (user.role !== role) {
+      const err = new Error("Invalid role");
+      err.statusCode = 400;
+      return next(err);
+    }
+
     // generate the token
     const token = jwt.sign(
       { userId: user._id, email },
@@ -181,8 +188,6 @@ const loginUser = async (req, res, next) => {
     );
     user.token = token;
     await user.save();
-    console.log("user.token", user.token);
-    console.log("user", user);
 
     // our token exp time
     const expiresIn = 2592000;
@@ -210,6 +215,7 @@ const getUserProfile = async (req, res, next) => {
       first_name: user.first_name,
       last_name: user.last_name,
       email: user.email,
+      role: user.role,
     };
 
     res.status(200).json({ profileData });

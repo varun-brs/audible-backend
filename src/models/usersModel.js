@@ -31,6 +31,7 @@ const userSchema = mongoose.Schema(
     last_name: { type: String, default: null },
     email: { type: String, unique: true },
     password: { type: String },
+    role: { type: String },
     languages: { type: Array, default: [] }, // Add default value for languages
     categories: { type: Array },
     saved_stories: { type: Array },
