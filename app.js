@@ -46,6 +46,17 @@ app.use(
   express.static(path.join(__dirname, "public/assets"))
 );
 
+app.use(
+  "/audible-frontend/assets",
+  express.static(path.join(__dirname, "public/assets"), {
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith(".css")) {
+        res.setHeader("Content-Type", "text/css");
+      }
+    },
+  })
+);
+
 // Use absolute path for production
 const viewsPath =
   process.env.NODE_ENV === "production"
