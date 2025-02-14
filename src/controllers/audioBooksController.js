@@ -141,10 +141,26 @@ const deleteAudioBook = async (req, res, next) => {
   }
 };
 
+const getAllAudioBooks = async (req, res, next) => {
+  try {
+    // Fetch all audio books
+    const audioBooksList = await AudioBook.find();
+
+    if (audioBooksList.length > 0) {
+      res.status(200).json(audioBooksList);
+    } else {
+      res.status(404).json({ message: "No audiobooks found" });
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
+
 export {
   createAudioBook,
   getAudioBooks,
   searchAudioBooks,
   updateAudioBook,
   deleteAudioBook,
+  getAllAudioBooks,
 };

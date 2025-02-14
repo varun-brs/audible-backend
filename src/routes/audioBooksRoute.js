@@ -6,6 +6,7 @@ import {
   searchAudioBooks,
   updateAudioBook,
   deleteAudioBook,
+  getAllAudioBooks,
 } from "../controllers/audioBooksController.js";
 
 const router = express.Router();
@@ -15,5 +16,6 @@ router.get("/getaudiobooks", checkToken, getAudioBooks);
 router.get("/search", checkToken, searchAudioBooks);
 router.patch("/editaudiobooks/:id", checkToken, updateAudioBook);
 router.delete("/deleteaudiobooks/:id", checkToken, deleteAudioBook);
+router.get("/getallaudiobooks", checkToken, getAllAudioBooks);
 
 export default router;
