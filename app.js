@@ -41,42 +41,11 @@ app.use("/api/audiobooks", audiobooksRoute);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use(
-  "/audible-frontend/assets",
-  express.static(path.join(__dirname, "public/assets"))
-);
-
-app.use(
-  "/audible-frontend/assets",
-  express.static(path.join(__dirname, "public/assets"), {
-    setHeaders: (res, filePath) => {
-      if (filePath.endsWith(".css")) {
-        res.setHeader("Content-Type", "text/css");
-      }
-    },
-  })
-);
-
 // Use absolute path for production
 const viewsPath =
   process.env.NODE_ENV === "production"
     ? "/opt/render/project/src/src/templates"
     : path.join(__dirname, "src", "templates");
-
-app.get("/debug-paths", (req, res) => {
-  const viewsPath = app.get("views");
-  const debug = {
-    viewsPath,
-    viewsExists: fs.existsSync(viewsPath),
-    cwd: process.cwd(),
-    dirname: __dirname,
-    viewsContents: fs.existsSync(viewsPath)
-      ? fs.readdirSync(viewsPath)
-      : "Directory not found",
-    env: process.env.NODE_ENV,
-  };
-  res.json(debug);
-});
 
 app.set("views", viewsPath);
 app.set("view engine", "ejs");

@@ -65,4 +65,86 @@ const getAudioBooks = async (req, res, next) => {
   }
 };
 
-export { createAudioBook, getAudioBooks };
+const searchAudioBooks = async (req, res, next) => {
+  const searchQuery = req.query.q?.toLowerCase(); // Get the search query parameter
+
+  if (!searchQuery) {
+    return res.status(400).json({ message: "Search query is required" });
+  }
+
+  try {
+    // Perform a case-insensitive search on both title and author fields
+    const results = await AudioBook.find({
+      $or: [
+        { book_name: { $regex: searchQuery, $options: "i" } }, // Case-insensitive search for title
+        // Case-insensitive search for author
+      ],
+    });
+
+    if (results.length > 0) {
+      return res.json(results);
+    } else {
+      return res.status(404).json({ message: "No audiobooks found" });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Error searching audiobooks" });
+  }
+};
+
+const updateAudioBook = async (req, res, next) => {
+  const { book_name, category, language, description } = req.body;
+  const { id } = req.params; // Get audiobook ID from URL params
+
+  try {
+    const book = await AudioBook.findById(id);
+
+    if (!book) {
+      return res.status(404).json({ message: "AudioBook not found" });
+    }
+
+    // Create an object with only the fields that are updated
+    const updatedFields = {};
+    if (book_name !== undefined) updatedFields.book_name = book_name;
+    if (category !== undefined) updatedFields.category = category;
+    if (language !== undefined) updatedFields.language = language;
+    if (description !== undefined) updatedFields.description = description;
+
+    // Perform update only with changed fields
+    const updatedBook = await AudioBook.findByIdAndUpdate(
+      id,
+      { $set: updatedFields },
+      { new: true } // Returns the updated document
+    );
+
+    res.status(200).json({
+      message: "AudioBook updated successfully",
+      updatedBook,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+const deleteAudioBook = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const audioBook = await AudioBook.findByIdAndDelete(id);
+
+    if (!audioBook) {
+      return res.status(404).json({ message: "AudioBook not found" });
+    }
+
+    res.status(200).json({ message: "AudioBook deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export {
+  createAudioBook,
+  getAudioBooks,
+  searchAudioBooks,
+  updateAudioBook,
+  deleteAudioBook,
+};
