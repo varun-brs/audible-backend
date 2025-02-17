@@ -20,4 +20,14 @@ const addCategory = async (req, res, next) => {
   }
 };
 
-export { addCategory, getCategory };
+// Get all active categories
+const getCategories = async (req, res, next) => {
+  try {
+    const categories = await Category.find({ status: true }).select("name");
+    res.status(200).json(categories);
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export { addCategory, getCategory, getCategories };

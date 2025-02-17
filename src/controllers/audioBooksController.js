@@ -156,6 +156,30 @@ const getAllAudioBooks = async (req, res, next) => {
   }
 };
 
+const getBooksByCategory = async (req, res, next) => {
+  try {
+    const { category } = req.params; // Extract categoryCode from URL
+
+    if (!category) {
+      return res.status(400).json({ message: "Category code is required" });
+    }
+
+    // Find audiobooks with the given category code
+    const books = await AudioBook.find({ category: category });
+
+    if (books.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No audiobooks found in this category" });
+    }
+
+    res.status(200).json(books);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 export {
   createAudioBook,
   getAudioBooks,
@@ -163,4 +187,5 @@ export {
   updateAudioBook,
   deleteAudioBook,
   getAllAudioBooks,
+  getBooksByCategory,
 };
